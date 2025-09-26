@@ -48,10 +48,44 @@ function clearAuthCookie() {
  *
  */
 function clean_input($data) {
-	$data = trim($data);
-	$data = stripslashes($data);
-	$data = htmlspecialchars($data);
-	return $data;
+        $data = trim($data);
+        $data = stripslashes($data);
+        $data = htmlspecialchars($data);
+        return $data;
+}
+
+/**
+ * Decode HTML special characters that may have been encoded multiple times.
+ *
+ * Older versions of the application stored values using htmlspecialchars() and
+ * that resulted in data being persisted as "&amp;". When those values were
+ * rendered again they were encoded repeatedly ("&amp;amp;" and so on).  This
+ * helper normalises the stored value by decoding the HTML entities until the
+ * string no longer changes, effectively giving us the original raw value.
+ */
+function normalize_html_entities($value, int $flags = ENT_QUOTES): string {
+        $normalized = (string)($value ?? '');
+
+        do {
+                $previous = $normalized;
+                $normalized = htmlspecialchars_decode($previous, $flags);
+        } while ($normalized !== $previous);
+
+        return $normalized;
+}
+
+/**
+ * Escape a value for safe output in HTML contexts.
+ *
+ * It first normalises the stored value (see normalize_html_entities()) and then
+ * applies htmlspecialchars() so that we never double-encode ampersands or
+ * other entities when rendering database values inside HTML attributes or
+ * plain text.
+ */
+function escape_output($value, int $flags = ENT_QUOTES): string {
+        $normalized = normalize_html_entities($value, $flags);
+
+        return htmlspecialchars($normalized, $flags, 'UTF-8');
 }
 
 function paginationLinks($current_page, $total_pages, $base_url) {

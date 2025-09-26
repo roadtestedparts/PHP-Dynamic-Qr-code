@@ -15,8 +15,8 @@
             <?php foreach ($rows as $row): ?>
             <tr>
                 <td><?php echo $row['id']; ?></td>
-                <td><?php echo htmlspecialchars($row['username']); ?></td>
-                <td><?php echo htmlspecialchars($row['type']); ?></td>
+                <td><?php echo escape_output($row['username']); ?></td>
+                <td><?php echo escape_output($row['type']); ?></td>
                 <td>
                     <!-- EDIT -->
                     <a href="user.php?edit=true&id=<?php echo $row['id']; ?>" class="btn btn-primary"><i class="fas fa-edit"></i></a>
