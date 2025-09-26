@@ -98,7 +98,7 @@ class DynamicQrcode {
             $data_to_db['id_owner'] = $owner;
         else
             $data_to_db['id_owner'] = NULL;
-
+      
         $input_data['id_owner'] = $owner;
         $data_to_db['filename'] = $this->normalizeInput($input_data['filename'] ?? '');
         $data_to_db['created_at'] = date('Y-m-d H:i:s');
