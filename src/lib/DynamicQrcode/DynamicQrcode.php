@@ -61,9 +61,9 @@ class DynamicQrcode {
         else
             $data_to_db['id_owner'] = NULL;
 
-        $data_to_db['filename'] = htmlspecialchars($input_data['filename'], ENT_QUOTES, 'UTF-8');
+        $data_to_db['filename'] = trim(normalize_html_entities($input_data['filename']));
         $data_to_db['created_at'] = date('Y-m-d H:i:s');
-        $data_to_db['link'] = htmlspecialchars($input_data['link'], ENT_QUOTES, 'UTF-8');
+        $data_to_db['link'] = trim(normalize_html_entities($input_data['link']));
         $data_to_db['created_by'] = $_SESSION['user_id'];
         $data_to_db['format'] = $input_data['format'];
         $data_to_db['identifier'] = randomString(rand(5,8));
@@ -83,9 +83,9 @@ class DynamicQrcode {
             $data_to_db['id_owner'] = $input_data['id_owner'];
         else
             $data_to_db['id_owner'] = NULL;
-        $data_to_db['filename'] = htmlspecialchars($input_data['filename'], ENT_QUOTES, 'UTF-8');
+        $data_to_db['filename'] = trim(normalize_html_entities($input_data['filename']));
         $data_to_db['created_at'] = date('Y-m-d H:i:s');
-        $data_to_db['link'] = htmlspecialchars($input_data['link'], ENT_QUOTES, 'UTF-8');
+        $data_to_db['link'] = trim(normalize_html_entities($input_data['link']));
         $data_to_db['state'] = $input_data['state'];
 
         $this->qrcode_instance->editQrcode($input_data, $data_to_db);
