@@ -16,6 +16,11 @@ class Users
     public function __destruct()
     {
     }
+
+    private function normalizeInput(?string $value): string
+    {
+        return trim(normalize_html_entities($value ?? ''));
+    }
     
     /**
      * Set friendly columns\' names to order tables\' entries
@@ -54,9 +59,9 @@ class Users
     public function addUser($input_data) {
         $db = getDbInstance();
 
-        $data_to_db["username"] = $input_data["username"];
+        $data_to_db["username"] = $this->normalizeInput($input_data["username"] ?? '');
         $data_to_db['password'] = password_hash($input_data['password'], PASSWORD_DEFAULT);
-        $data_to_db["type"] = $input_data["type"];
+        $data_to_db["type"] = $this->normalizeInput($input_data["type"] ?? '');
 
         $db->where('username', $data_to_db['username']);
         $db->get('users');
@@ -77,8 +82,9 @@ class Users
     public function editUser($input_data) {
         $db = getDbInstance();
 
-        $db->where('username', $input_data['username']);
-        $db->where('id', $input_data["id"], '!=');
+        $sanitized_username = $this->normalizeInput($input_data['username'] ?? '');
+        $db->where('username', $sanitized_username);
+        $db->where('id', $this->normalizeInput($input_data["id"] ?? ''), '!=');
         $row = $db->getOne('users');
 
         if (!empty($row['username']))  {
@@ -89,11 +95,11 @@ class Users
             $this->failure('Username already exists', 'Location: user.php?'.$query_string);
         }
 
-        $data_to_db["username"] = $input_data["username"];
+        $data_to_db["username"] = $sanitized_username;
         $data_to_db['password'] = password_hash($input_data['password'], PASSWORD_DEFAULT);
-        $data_to_db["type"] = $input_data["type"];
+        $data_to_db["type"] = $this->normalizeInput($input_data["type"] ?? '');
 
-	    $db->where('id', $input_data["id"]);
+            $db->where('id', $this->normalizeInput($input_data["id"] ?? ''));
 	    $stat = $db->update('users', $data_to_db);
         
         if ($stat)
@@ -111,9 +117,9 @@ class Users
             header('HTTP/1.1 401 Unauthorized', true, 401);
             exit("401 Unauthorized");
         }
-        
+
         $db = getDbInstance();
-        $db->where('id', $id);
+        $db->where('id', $this->normalizeInput((string)$id));
         $stat = $db->delete('users');
 
         if ($stat)

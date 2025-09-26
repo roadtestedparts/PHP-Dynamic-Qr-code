@@ -41,8 +41,8 @@
         <tbody>
             <?php foreach ($rows as $row): ?>
             <tr>
-                <td><input type="checkbox" name="action[]" value="<?=$row['id']?>" onchange="updateBulkActionVisibility()"></td>
-                <td><?php echo $row['id']; ?></td>
+                <td><input type="checkbox" name="action[]" value="<?php echo escape_output($row['id']); ?>" onchange="updateBulkActionVisibility()"></td>
+                <td><?php echo escape_output($row['id']); ?></td>
                 <td>
                     <?php
                     if(!isset($row['id_owner']))
@@ -52,7 +52,7 @@
                         $users = new Users();
                         $user = $users->getUser($row['id_owner']);
                         if($user !== NULL)
-                            echo $user["username"];
+                            echo escape_output($user["username"]);
                         else
                             echo "";
                     }
@@ -69,14 +69,14 @@
                 <td>
                     
                     <!-- EDIT -->
-                    <a href="dynamic_qrcode.php?edit=true&id=<?php echo $row['id']; ?>" class="btn btn-primary"><i class="fas fa-edit"></i></a>
+                    <a href="dynamic_qrcode.php?edit=true&id=<?php echo escape_output($row['id']); ?>" class="btn btn-primary"><i class="fas fa-edit"></i></a>
                     
                     <!-- DELETE -->
                     <a
                             class="btn btn-danger delete_btn"
                             data-toggle="modal"
                             data-target="#delete-modal"
-                            data-del_id="<?php echo $row["id"];?>"
+                            data-del_id="<?php echo escape_output($row["id"]); ?>"
                     ><i class="fas fa-trash"></i></a>
                     
                     <!-- DOWNLOAD -->

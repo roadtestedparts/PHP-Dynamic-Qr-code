@@ -7,7 +7,7 @@
                     <span class="input-group-text"><i class="fa fa-user"></i></span>
                 </div>
                 
-                <input type="text" name="username" placeholder="Username" class="form-control" required="required" value="<?php echo ($edit) ? $user['username'] : ''; ?>" autocomplete="off">
+                <input type="text" name="username" placeholder="Username" class="form-control" required="required" value="<?php echo ($edit) ? escape_output($user['username']) : ''; ?>" autocomplete="off">
             </div>
         </div>
     </div>
@@ -41,7 +41,7 @@
         </div>
     </div>
     <?php if($edit) { ?>
-        <input type="hidden" name="id" value="<?php echo $user['id'];?>"/>
+        <input type="hidden" name="id" value="<?php echo escape_output($user['id']); ?>"/>
         <input type="hidden" name="edit" value="true"/>
     <?php } ?>
 </fieldset>

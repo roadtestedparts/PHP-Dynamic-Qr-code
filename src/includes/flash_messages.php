@@ -10,7 +10,7 @@ echo '
               <div class="card-body p-0">
                 <div class="alert alert-success alert-dismissible">
                   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                  <i class="icon fas fa-check"></i><strong>Success! </strong>'. $_SESSION['success'].'
+                  <i class="icon fas fa-check"></i><strong>Success! </strong>'. escape_output($_SESSION['success'] ?? '').'
   	            </div>
   	           </div>
   	        </div>
@@ -30,7 +30,7 @@ echo '
               <div class="card-body p-0">
                 <div class="alert alert-danger alert-dismissible">
                   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                  <i class="fas fa-times"></i> <strong>Oops! </strong>'. $_SESSION['failure'].'
+                  <i class="fas fa-times"></i> <strong>Oops! </strong>'. escape_output($_SESSION['failure'] ?? '').'
   	            </div>
   	           </div>
   	        </div>
@@ -50,7 +50,7 @@ echo '
               <div class="card-body p-0">
                 <div class="alert alert-info alert-dismissible">
                   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                  <i class="fas fa-info-circle"></i> '. $_SESSION['info'].'
+                  <i class="fas fa-info-circle"></i> '. escape_output($_SESSION['info'] ?? '').'
   	            </div>
   	           </div>
   	        </div>
