@@ -24,6 +24,11 @@ class DynamicQrcode {
      */
     public function __destruct() {
     }
+
+    private function normalizeInput(?string $value): string
+    {
+        return trim(normalize_html_entities($value ?? ''));
+    }
     
     /**
      * Set friendly columns names to order tables entries
@@ -56,21 +61,29 @@ class DynamicQrcode {
      * We save into db the url of qrcode image
      */
     public function addQrcode($input_data) {
-        if($input_data['id_owner'] != "")
-            $data_to_db['id_owner'] = $input_data['id_owner'];
+        $owner = isset($input_data['id_owner']) ? $this->normalizeInput($input_data['id_owner']) : '';
+
+        if($owner !== "")
+            $data_to_db['id_owner'] = $owner;
         else
             $data_to_db['id_owner'] = NULL;
 
-        $data_to_db['filename'] = htmlspecialchars($input_data['filename'], ENT_QUOTES, 'UTF-8');
+        $input_data['id_owner'] = $owner;
+
+        $data_to_db['filename'] = $this->normalizeInput($input_data['filename'] ?? '');
         $data_to_db['created_at'] = date('Y-m-d H:i:s');
-        $data_to_db['link'] = htmlspecialchars($input_data['link'], ENT_QUOTES, 'UTF-8');
+        $data_to_db['link'] = $this->normalizeInput($input_data['link'] ?? '');
         $data_to_db['created_by'] = $_SESSION['user_id'];
-        $data_to_db['format'] = $input_data['format'];
+        $data_to_db['format'] = $this->normalizeInput($input_data['format'] ?? '');
         $data_to_db['identifier'] = randomString(rand(5,8));
         $data_to_db['qrcode'] = $data_to_db['filename'].'.'.$data_to_db['format'];
 
         $data_to_qrcode = READ_PATH.$data_to_db['identifier'];
-        
+
+        $input_data['filename'] = $data_to_db['filename'];
+        $input_data['link'] = $data_to_db['link'];
+        $input_data['format'] = $data_to_db['format'];
+
         $this->qrcode_instance->addQrcode($input_data, $data_to_db, $data_to_qrcode);
     }
     
@@ -79,14 +92,30 @@ class DynamicQrcode {
      * 
      */
     public function editQrcode($input_data) {
-        if($input_data['id_owner'] != "")
-            $data_to_db['id_owner'] = $input_data['id_owner'];
+        $owner = isset($input_data['id_owner']) ? $this->normalizeInput($input_data['id_owner']) : '';
+
+        if($owner !== "")
+            $data_to_db['id_owner'] = $owner;
         else
             $data_to_db['id_owner'] = NULL;
-        $data_to_db['filename'] = htmlspecialchars($input_data['filename'], ENT_QUOTES, 'UTF-8');
+
+        $input_data['id_owner'] = $owner;
+        $data_to_db['filename'] = $this->normalizeInput($input_data['filename'] ?? '');
         $data_to_db['created_at'] = date('Y-m-d H:i:s');
-        $data_to_db['link'] = htmlspecialchars($input_data['link'], ENT_QUOTES, 'UTF-8');
-        $data_to_db['state'] = $input_data['state'];
+        $data_to_db['link'] = $this->normalizeInput($input_data['link'] ?? '');
+        $data_to_db['state'] = $this->normalizeInput($input_data['state'] ?? '');
+
+        $input_data['filename'] = $data_to_db['filename'];
+        $input_data['link'] = $data_to_db['link'];
+        $input_data['state'] = $data_to_db['state'];
+
+        if(isset($input_data['old_filename'])) {
+            $input_data['old_filename'] = $this->normalizeInput($input_data['old_filename']);
+        }
+
+        if(isset($input_data['id'])) {
+            $input_data['id'] = $this->normalizeInput($input_data['id']);
+        }
 
         $this->qrcode_instance->editQrcode($input_data, $data_to_db);
     }

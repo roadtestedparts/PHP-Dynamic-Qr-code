@@ -34,9 +34,10 @@ if (!$db->update('dynamic_qrcodes', $data)) {
 
 if ($qrcode['state'] == 'enable') {
     // Validation and escaping of the URL to avoid XSS attacks
-    $link = filter_var($qrcode['link'], FILTER_VALIDATE_URL);
+    $link = normalize_html_entities($qrcode['link']);
+    $link = filter_var($link, FILTER_VALIDATE_URL);
     if ($link) {
-        echo '<meta http-equiv="refresh" content="0; URL=' . htmlspecialchars($link, ENT_QUOTES, 'UTF-8') . '" />';
+        echo '<meta http-equiv="refresh" content="0; URL=' . escape_output($link) . '" />';
         echo 'Loading...'; // You can include a custom page to display during the redirect
     } else {
         echo 'Invalid URL';

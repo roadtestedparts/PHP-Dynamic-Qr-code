@@ -113,7 +113,7 @@
 
                         foreach ($users as $user) {
                         ?>
-                        <option value="<?php echo $user["id"];?>"><?php echo $user["username"];?></option>
+                        <option value="<?php echo escape_output($user["id"]); ?>"><?php echo escape_output($user["username"]); ?></option>
                         <?php } ?>
                     </select>
                 </div>
@@ -121,6 +121,6 @@
         </div>
     </div>
     <?php } else { ?>
-        <input type="hidden" name="id_owner" value="<?php echo $_SESSION["user_id"];?>"/>
+        <input type="hidden" name="id_owner" value="<?php echo escape_output($_SESSION["user_id"]); ?>"/>
     <?php } ?>
 </fieldset>

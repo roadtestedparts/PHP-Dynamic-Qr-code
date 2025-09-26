@@ -28,6 +28,11 @@ class StaticQrcode {
     public function __destruct()
     {
     }
+
+    private function normalizeInput(?string $value): string
+    {
+        return trim(normalize_html_entities($value ?? ''));
+    }
     
     /**
      * Set friendly columns\' names to order tables\' entries
@@ -54,7 +59,9 @@ class StaticQrcode {
      */
     public function textQrcode($text)
     {
-        if($text != NULL){
+        $text = $this->normalizeInput($text);
+
+        if($text !== ''){
             $this->sData = $text;
             $this->sContent = '<strong>Text:</strong> '.$text;
             $this->addQrcode("text");
@@ -71,7 +78,11 @@ class StaticQrcode {
      */
     public function emailQrcode($email, $subject, $message)
     {
-        if($email != NULL && $message != NULL){
+        $email = $this->normalizeInput($email);
+        $subject = $this->normalizeInput($subject);
+        $message = $this->normalizeInput($message);
+
+        if($email !== '' && $message !== ''){
             $this->sData = 'MATMSG:TO:'.$email.';SUB:'.$subject.';BODY:'.$message.';';
             $this->sContent = '<strong>Email:</strong> '.$email.'<br>'.'<strong>Subject:</strong> '.$subject.'<br>'.'<strong>Message:</strong> '.$message;
 
@@ -88,8 +99,11 @@ class StaticQrcode {
      */
     public function phoneQrcode($country_code, $phone_number)
     {
-        if($phone_number != NULL){
-            $this->sData = 'TEL:'.$country_code.$phone_number;  
+        $country_code = $this->normalizeInput($country_code);
+        $phone_number = $this->normalizeInput($phone_number);
+
+        if($phone_number !== ''){
+            $this->sData = 'TEL:'.$country_code.$phone_number;
             $this->sContent = '<strong>Phone number:</strong> '.$country_code.$phone_number;
 
             $this->addQrcode("phone");
@@ -106,8 +120,12 @@ class StaticQrcode {
      */
     public function smsQrcode($country_code, $phone_number, $message)
     {
-        if($phone_number != NULL && $message != NULL){
-            $this->sData = 'SMSTO:'.$country_code.$phone_number.':'.$message;  
+        $country_code = $this->normalizeInput($country_code);
+        $phone_number = $this->normalizeInput($phone_number);
+        $message = $this->normalizeInput($message);
+
+        if($phone_number !== '' && $message !== ''){
+            $this->sData = 'SMSTO:'.$country_code.$phone_number.':'.$message;
             $this->sContent = '<strong>Phone number:</strong> '.$country_code.$phone_number.'<br>'.'<strong>Message:</strong> '.$message;
 
             $this->addQrcode("sms");
@@ -124,8 +142,12 @@ class StaticQrcode {
      */
     public function whatsappQrcode($country_code, $phone_number, $message)
     {
-        if($phone_number != NULL){
-            $this->sData = 'https://wa.me/'.$country_code.$phone_number.'?text='.$message;  
+        $country_code = $this->normalizeInput($country_code);
+        $phone_number = $this->normalizeInput($phone_number);
+        $message = $this->normalizeInput($message);
+
+        if($phone_number !== ''){
+            $this->sData = 'https://wa.me/'.$country_code.$phone_number.'?text='.$message;
             $this->sContent = '<strong>Phone number:</strong> '.$country_code.$phone_number.'<br>'.'<strong>Message:</strong> '.$message;
 
             $this->addQrcode("whatsapp");
@@ -140,7 +162,9 @@ class StaticQrcode {
      */
     public function skypeQrcode($skype_username)
     {
-        if($skype_username != NULL){
+        $skype_username = $this->normalizeInput($skype_username);
+
+        if($skype_username !== ''){
             $this->sData = 'skype:'.$skype_username.'?call';
             $this->sContent = '<strong>Skype username:</strong> '.$skype_username;
 
@@ -157,7 +181,10 @@ class StaticQrcode {
      */
     public function locationQrcode($latitude, $longitude)
     {
-        if($latitude != NULL && $longitude != NULL){
+        $latitude = $this->normalizeInput($latitude);
+        $longitude = $this->normalizeInput($longitude);
+
+        if($latitude !== '' && $longitude !== ''){
             $this->sData = 'GEO:'.$latitude.','.$longitude.';';
             $this->sContent = '<strong>Latitude:</strong> '.$latitude.'<br>'.'<strong>Longitude:</strong> '.$longitude;
 
@@ -173,24 +200,41 @@ class StaticQrcode {
      */
     public function vcardQrcode($fullname, $nickname, $email, $website, $phone, $home_phone, $work_phone, $company, $role, $categories, $note, $photo, $address, $city, $postcode, $state)
     {
-        if($fullname != NULL && $phone != NULL){
-            
+        $fullname = $this->normalizeInput($fullname);
+        $nickname = $this->normalizeInput($nickname);
+        $email = $this->normalizeInput($email);
+        $website = $this->normalizeInput($website);
+        $phone = $this->normalizeInput($phone);
+        $home_phone = $this->normalizeInput($home_phone);
+        $work_phone = $this->normalizeInput($work_phone);
+        $company = $this->normalizeInput($company);
+        $role = $this->normalizeInput($role);
+        $categories = $this->normalizeInput($categories);
+        $note = $this->normalizeInput($note);
+        $photo = $this->normalizeInput($photo);
+        $address = $this->normalizeInput($address);
+        $city = $this->normalizeInput($city);
+        $postcode = $this->normalizeInput($postcode);
+        $state = $this->normalizeInput($state);
+
+        if($fullname !== '' && $phone !== ''){
+
             $vcard = new vCard;
             $vcard->name($fullname);
-            $vcard->nickName($nickname); 
-            $vcard->email($email); 
-            $vcard->url($website); 
-            $vcard->cellPhone($phone); 
-            $vcard->homePhone($home_phone); 
-            $vcard->workPhone($work_phone); 
-            $vcard->organization($company); 
-            $vcard->role($role); 
-            $vcard->categories($categories); 
-            $vcard->note($note); 
-            $vcard->photo($photo); 
-            $vcard->address($address, $city, $postcode, $state); 
+            $vcard->nickName($nickname);
+            $vcard->email($email);
+            $vcard->url($website);
+            $vcard->cellPhone($phone);
+            $vcard->homePhone($home_phone);
+            $vcard->workPhone($work_phone);
+            $vcard->organization($company);
+            $vcard->role($role);
+            $vcard->categories($categories);
+            $vcard->note($note);
+            $vcard->photo($photo);
+            $vcard->address($address, $city, $postcode, $state);
             $vcard->create();
-            
+
             $this->sData = $vcard->get();
             $this->sContent = '<div class="row"><div class="col-sm-4">';
             
@@ -223,7 +267,15 @@ class StaticQrcode {
      */
     public function eventQrcode($title, $start, $end, $timezone, $location, $description, $url)
     {
-        if($title != NULL && $start != NULL && $end != NULL){
+        $title = $this->normalizeInput($title);
+        $start = $this->normalizeInput($start);
+        $end = $this->normalizeInput($end);
+        $timezone = $this->normalizeInput($timezone);
+        $location = $this->normalizeInput($location);
+        $description = $this->normalizeInput($description);
+        $url = $this->normalizeInput($url);
+
+        if($title !== '' && $start !== '' && $end !== ''){
             header('Content-Type: text/calendar; charset=utf-8');
             header('Content-Disposition: attachment; filename=invite.ics');
 
@@ -267,8 +319,11 @@ class StaticQrcode {
      */
     public function bookmarkQrcode($url, $title)
     {
-        if($url != NULL){
-            $this->sData = 'MEBKM:TITLE:'.$title.';URL:'.$url.';';  
+        $url = $this->normalizeInput($url);
+        $title = $this->normalizeInput($title);
+
+        if($url !== ''){
+            $this->sData = 'MEBKM:TITLE:'.$title.';URL:'.$url.';';
             $this->sContent = '<strong>Title:</strong> '.$title.'<br>'.'<strong>Url:</strong> '.$url;
 
             $this->addQrcode("bookmark");
@@ -285,8 +340,12 @@ class StaticQrcode {
      */
     public function wifiQrcode($encryption, $ssid, $password)
     {
-        if($ssid != NULL){
-            $this->sData = 'WIFI:T:'.$encryption.';S:'.$ssid.';P:'.$password.';';  
+        $encryption = $this->normalizeInput($encryption);
+        $ssid = $this->normalizeInput($ssid);
+        $password = $this->normalizeInput($password);
+
+        if($ssid !== ''){
+            $this->sData = 'WIFI:T:'.$encryption.';S:'.$ssid.';P:'.$password.';';
             $this->sContent = '<strong>Encryption:</strong> '.$encryption.'<br>'.'<strong>SSID:</strong> '.$ssid.'<br>'.'<strong>Password:</strong> '.$password;
 
             $this->addQrcode("wifi");
@@ -308,11 +367,20 @@ class StaticQrcode {
      */
     public function paypalQrcode($payment_type, $email, $item_name, $item_id, $amount, $currency, $shipping, $tax_rate)
     {
-        if($email != NULL && $item_name != NULL && $amount != NULL){
+        $payment_type = $this->normalizeInput($payment_type);
+        $email = $this->normalizeInput($email);
+        $item_name = $this->normalizeInput($item_name);
+        $item_id = $this->normalizeInput($item_id);
+        $amount = $this->normalizeInput($amount);
+        $currency = $this->normalizeInput($currency);
+        $shipping = $this->normalizeInput($shipping);
+        $tax_rate = $this->normalizeInput($tax_rate);
+
+        if($email !== '' && $item_name !== '' && $amount !== ''){
             $this->sData = 'https://www.paypal.com/webapps/xorouter?cmd='.$payment_type.'&business='.$email.'&item_name='.$item_name.'&item_number='.$item_id.'&amount='.$amount.'&currency_code='.$currency.'&shipping='.$shipping.'&tax_rate='.$tax_rate;
-            
+
             $this->sContent = '<div class="row"><div class="col-sm-4">';
-            
+
                 $this->sContent .= '<strong>Payment type:</strong> '.$payment_type.'<br>'.'<strong>Email:</strong> '.$email.'<br>'.'<strong>Item name:</strong> '.$item_name.'<br>'.'<strong>Item id:</strong> '.$item_id.'</div>';
             
             $this->sContent .= '<div class="col-sm-4">';
@@ -336,11 +404,16 @@ class StaticQrcode {
      */
     public function bitcoinQrcode($address, $amount, $label, $message)
     {
-        if($address != NULL && $amount != NULL){
+        $address = $this->normalizeInput($address);
+        $amount = $this->normalizeInput($amount);
+        $label = $this->normalizeInput($label);
+        $message = $this->normalizeInput($message);
+
+        if($address !== '' && $amount !== ''){
             $this->sData = 'bitcoin:'.$address.'?amount='.$amount.'&label='.$label.'&message='.$message;
             $this->sContent = '<strong>BTC address:</strong> '.$address.'<br>'.'<strong>Amount:</strong> '.$amount.'<br>';
             $this->sContent .= '<strong>Label:</strong> '.$label.'<br>'.'<strong>Message:</strong> '.$message;
-        
+
             $this->addQrcode("bitcoin");
         }
         else
@@ -358,7 +431,12 @@ class StaticQrcode {
      */
     public function twofaQrcode($algorithms, $secret, $label, $issuer)
     {
-        if($algorithms != NULL && $secret != NULL && $label != NULL){
+        $algorithms = $this->normalizeInput($algorithms);
+        $secret = $this->normalizeInput($secret);
+        $label = $this->normalizeInput($label);
+        $issuer = $this->normalizeInput($issuer);
+
+        if($algorithms !== '' && $secret !== '' && $label !== ''){
             $this->sData = 'otpauth://' . $algorithms . '/' . $label . '?secret=' . $secret;
 
             if (!empty($issuer)) {
@@ -389,27 +467,31 @@ class StaticQrcode {
      * We save into db the url of qrcode image
      */
     private function addQrcode($type) {
-        if($_POST['id_owner'] != "")
-            $data_to_db['id_owner'] = $_POST['id_owner'];
+        $owner = isset($_POST['id_owner']) ? $this->normalizeInput($_POST['id_owner']) : '';
+
+        if($owner !== "")
+            $data_to_db['id_owner'] = $owner;
         else
             $data_to_db['id_owner'] = NULL;
+
+        $input_data['id_owner'] = $owner;
         $data_to_db['created_at'] = date('Y-m-d H:i:s');
         $data_to_db['created_by'] = $_SESSION['user_id'];
-        $data_to_db['filename'] = htmlspecialchars($_POST['filename'], ENT_QUOTES, 'UTF-8');
+        $data_to_db['filename'] = $this->normalizeInput($_POST['filename'] ?? '');
         $data_to_db['created_at'] = date('Y-m-d H:i:s');
         $data_to_db['type'] = $type;
-        $data_to_db['format'] = $_POST['format'];
+        $data_to_db['format'] = $this->normalizeInput($_POST['format'] ?? '');
         $data_to_db['qrcode'] = $data_to_db['filename'].'.'.$data_to_db['format'];
         $data_to_db['content'] = htmlspecialchars($this->sContent, ENT_QUOTES, 'UTF-8');
 
         if(isset($_POST['level']))
-            $input_data["level"] = $_POST['level'];
+            $input_data["level"] = $this->normalizeInput($_POST['level']);
 
         if(isset($_POST['size']))
-            $input_data["size"] = $_POST['size'];
+            $input_data["size"] = $this->normalizeInput($_POST['size']);
 
-        $input_data["foreground"] = $_POST['foreground'];
-        $input_data["background"] = $_POST['background'];
+        $input_data["foreground"] = $this->normalizeInput($_POST['foreground'] ?? '');
+        $input_data["background"] = $this->normalizeInput($_POST['background'] ?? '');
 
         $data_to_qrcode = urlencode($this->sData);
 
@@ -421,12 +503,24 @@ class StaticQrcode {
      * 
      */
     public function editQrcode($input_data) {
-        if($input_data['id_owner'] != "")
-            $data_to_db['id_owner'] = $input_data['id_owner'];
+        $owner = isset($input_data['id_owner']) ? $this->normalizeInput($input_data['id_owner']) : '';
+
+        if($owner !== "")
+            $data_to_db['id_owner'] = $owner;
         else
             $data_to_db['id_owner'] = NULL;
-        $data_to_db['filename'] = htmlspecialchars($input_data['filename'], ENT_QUOTES, 'UTF-8');
+        $data_to_db['filename'] = $this->normalizeInput($input_data['filename'] ?? '');
         $data_to_db['created_at'] = date('Y-m-d H:i:s');
+
+        $input_data['filename'] = $data_to_db['filename'];
+
+        if(isset($input_data['old_filename'])) {
+            $input_data['old_filename'] = $this->normalizeInput($input_data['old_filename']);
+        }
+
+        if(isset($input_data['id'])) {
+            $input_data['id'] = $this->normalizeInput($input_data['id']);
+        }
 
         $this->qrcode_instance->editQrcode($input_data, $data_to_db);
     }
